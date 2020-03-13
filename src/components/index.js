@@ -6,7 +6,7 @@ let ClicaptchaConstructor = Vue.extend(require('./Clicaptcha.vue').default)
 
 let instance;
 
-const Clicaptcha = (options) => {
+const VueClickCaptcha = (options) => {
 	options = options || {}
 	instance = new ClicaptchaConstructor({
 		data: options
@@ -17,4 +17,4 @@ const Clicaptcha = (options) => {
 	return instance.vm
 }
 
-export default Clicaptcha
+export default VueClickCaptcha

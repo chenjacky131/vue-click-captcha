@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import Clicaptcha from "@/components/index.js";
+import Clickcaptcha from "@/components/index.js";
 
 export default {
     methods: {
         captcha() {
-            Clicaptcha({
+            Clickcaptcha({
                 src: "http://localhost/clicaptcha-server/clicaptcha.php",
                 callback: () => {
                     alert("yes");

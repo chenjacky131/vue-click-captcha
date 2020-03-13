@@ -87,34 +87,6 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
-/***/ "044b":
-/***/ (function(module, exports) {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-module.exports = function (obj) {
-  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
-}
-
-function isBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
-}
-
-
-/***/ }),
-
 /***/ "06cf":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -183,7 +155,15 @@ Axios.prototype.request = function request(config) {
   }
 
   config = mergeConfig(this.defaults, config);
-  config.method = config.method ? config.method.toLowerCase() : 'get';
+
+  // Set config.method
+  if (config.method) {
+    config.method = config.method.toLowerCase();
+  } else if (this.defaults.method) {
+    config.method = this.defaults.method.toLowerCase();
+  } else {
+    config.method = 'get';
+  }
 
   // Hook up interceptors middleware
   var chain = [dispatchRequest, undefined];
@@ -459,6 +439,21 @@ module.exports = function (R, S) {
 
 /***/ }),
 
+/***/ "198b":
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__("dd9b");
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var add = __webpack_require__("499e").default
+var update = add("3d8cc09e", content, true, {"sourceMap":false,"shadowMode":false});
+
+/***/ }),
+
 /***/ "1c0b":
 /***/ (function(module, exports) {
 
@@ -662,12 +657,11 @@ function setContentTypeIfUnset(headers, value) {
 
 function getDefaultAdapter() {
   var adapter;
-  // Only Node.JS has a process variable that is of [[Class]] process
-  if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__("b50d");
-  } else if (typeof XMLHttpRequest !== 'undefined') {
+  if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
+    adapter = __webpack_require__("b50d");
+  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+    // For node use HTTP adapter
     adapter = __webpack_require__("b50d");
   }
   return adapter;
@@ -777,14 +771,32 @@ module.exports = function (useSourceMap) {
   // eslint-disable-next-line func-names
 
 
-  list.i = function (modules, mediaQuery) {
+  list.i = function (modules, mediaQuery, dedupe) {
     if (typeof modules === 'string') {
       // eslint-disable-next-line no-param-reassign
       modules = [[null, modules, '']];
     }
 
-    for (var i = 0; i < modules.length; i++) {
-      var item = [].concat(modules[i]);
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
 
       if (mediaQuery) {
         if (!item[2]) {
@@ -813,7 +825,7 @@ function cssWithMappingToString(item, useSourceMap) {
   if (useSourceMap && typeof btoa === 'function') {
     var sourceMapping = toComment(cssMapping);
     var sourceURLs = cssMapping.sources.map(function (source) {
-      return "/*# sourceURL=".concat(cssMapping.sourceRoot).concat(source, " */");
+      return "/*# sourceURL=".concat(cssMapping.sourceRoot || '').concat(source, " */");
     });
     return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
   }
@@ -835,14 +847,15 @@ function toComment(sourceMap) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"466dbeb9-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Clicaptcha.vue?vue&type=template&id=f97200ea&scoped=true&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"e51e4d02-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Clicaptcha.vue?vue&type=template&id=100a44f0&scoped=true&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',{attrs:{"id":"clicaptcha-container"}},[_c('div',{staticClass:"clicaptcha-imgbox"},[_c('img',{staticClass:"clicaptcha-img",attrs:{"src":_vm.imgSrc,"alt":"验证码加载失败，请点击刷新按钮"},on:{"load":_vm.setTitle,"click":function($event){$event.preventDefault();return _vm.record($event)}}}),_vm._l((_vm.xy),function(item,index){return _c('span',{key:index,staticClass:"step",style:(("left:" + (item.split(',')[0] - 13) + "px;top:" + (item.split(',')[1] - 13) + "px"))},[_vm._v(_vm._s(index + 1))])})],2),(_vm.tip)?_c('div',{staticClass:"clicaptcha-title"},[_vm._v(" "+_vm._s(_vm.tip)+" ")]):_c('div',{staticClass:"clicaptcha-title"},[_vm._v(" 请依次点击 "),_vm._l((_vm.text),function(text,index){return _c('span',{key:index,class:_vm.xy.length > index ? 'clicaptcha-clicked' : ''},[_vm._v(_vm._s(text))])})],2),_c('div',{staticClass:"clicaptcha-refresh-box"},[_c('div',{staticClass:"clicaptcha-refresh-line clicaptcha-refresh-line-l"}),_c('a',{staticClass:"clicaptcha-refresh-btn",attrs:{"href":"javascript:;","title":"刷新"},on:{"click":_vm.reset}}),_c('div',{staticClass:"clicaptcha-refresh-line clicaptcha-refresh-line-r"})])]),_c('div',{attrs:{"id":"clicaptcha-mask"},on:{"click":_vm.close}})])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/Clicaptcha.vue?vue&type=template&id=f97200ea&scoped=true&
+// CONCATENATED MODULE: ./src/components/Clicaptcha.vue?vue&type=template&id=100a44f0&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.join.js
 var es_array_join = __webpack_require__("a15b");
@@ -931,8 +944,8 @@ axios_default.a.defaults.withCredentials = true;
         })).then(function (cb) {
           var that = _this;
 
-          if (cb.data == 1) {
-            that.tip = that.success;
+          if (cb.data.Token) {
+            that.tip = that.success(cb.data.Token);
             setTimeout(function () {
               that.close();
               that.callback();
@@ -957,8 +970,8 @@ axios_default.a.defaults.withCredentials = true;
 });
 // CONCATENATED MODULE: ./src/components/Clicaptcha.vue?vue&type=script&lang=js&
  /* harmony default export */ var components_Clicaptchavue_type_script_lang_js_ = (Clicaptchavue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/components/Clicaptcha.vue?vue&type=style&index=0&id=f97200ea&lang=scss&scoped=true&
-var Clicaptchavue_type_style_index_0_id_f97200ea_lang_scss_scoped_true_ = __webpack_require__("ea7e");
+// EXTERNAL MODULE: ./src/components/Clicaptcha.vue?vue&type=style&index=0&id=100a44f0&lang=scss&scoped=true&
+var Clicaptchavue_type_style_index_0_id_100a44f0_lang_scss_scoped_true_ = __webpack_require__("d751");
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -1034,7 +1047,7 @@ function normalizeComponent (
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
-      // register for functioal component in vue file
+      // register for functional component in vue file
       var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
@@ -1070,7 +1083,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "f97200ea",
+  "100a44f0",
   null
   
 )
@@ -1083,7 +1096,7 @@ var component = normalizeComponent(
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
- * Vue Cookies v1.6.1
+ * Vue Cookies v1.7.0
  * https://github.com/cmp-cc/vue-cookies
  *
  * Copyright 2016, cmp-cc
@@ -1097,6 +1110,7 @@ var component = normalizeComponent(
         path : '; path=/',
         domain:'',
         secure:'',
+        sameSite:''
     }
 
     var VueCookies = {
@@ -1105,11 +1119,12 @@ var component = normalizeComponent(
             Vue.prototype.$cookies = this
             Vue.$cookies = this
         },
-        config : function(expireTimes,path,domain,secure) {
+        config : function(expireTimes,path,domain,secure,sameSite) {
             defaultConfig.expires = expireTimes ? expireTimes : '1d';
             defaultConfig.path = path ? '; path=' + path : '; path=/';
             defaultConfig.domain = domain ? '; domain=' + domain : '';
-            defaultConfig.secure = secure ? '; secure' : '';
+            defaultConfig.secure = secure ? '; Secure' : '';
+            defaultConfig.sameSite = sameSite ? '; SameSite=' + sameSite : '';
         },
         get: function(key) {
             var value = decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null
@@ -1123,11 +1138,11 @@ var component = normalizeComponent(
             }
             return value;
         },
-        set: function(key, value, expireTimes, path, domain, secure) {
+        set: function(key, value, expireTimes, path, domain, secure, sameSite) {
             if (!key) {
-                throw new Error("cookie name is not find in first argument")
-            }else if(/^(?:expires|max\-age|path|domain|secure)$/i.test(key)){
-                throw new Error("cookie key name illegality ,Cannot be set to ['expires','max-age','path','domain','secure']\t","current key name: "+key);
+                throw new Error("Cookie name is not find in first argument.")
+            }else if(/^(?:expires|max\-age|path|domain|secure|SameSite)$/i.test(key)){
+                throw new Error("Cookie key name illegality, Cannot be set to ['expires','max-age','path','domain','secure','SameSite']\t current key name: " + key);
             }
             // support json object
             if(value && value.constructor === Object) {
@@ -1165,7 +1180,13 @@ var component = normalizeComponent(
                         break;
                 }
             }
-            document.cookie = encodeURIComponent(key) + "=" + encodeURIComponent(value) + _expires + (domain ? "; domain=" + domain : defaultConfig.domain) + (path ? "; path=" + path : defaultConfig.path) + (secure === undefined ? defaultConfig.secure : secure ? "; secure" : "");
+            document.cookie =
+                encodeURIComponent(key) + "=" + encodeURIComponent(value) +
+                _expires +
+                (domain ? "; domain=" + domain : defaultConfig.domain) +
+                (path ? "; path=" + path : defaultConfig.path) +
+                (secure === undefined ? defaultConfig.secure : secure ? "; Secure" : "") +
+                (sameSite === undefined ? defaultConfig.sameSite : (sameSite ? "; SameSite=" + sameSite : ""));
             return this;
         },
         remove: function(key, path, domain) {
@@ -1453,13 +1474,11 @@ module.exports = (
 
 var utils = __webpack_require__("d233");
 var formats = __webpack_require__("b313");
-var has = Object.prototype.hasOwnProperty;
 
 var arrayPrefixGenerators = {
     brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
         return prefix + '[]';
     },
-    comma: 'comma',
     indices: function indices(prefix, key) { // eslint-disable-line func-name-matching
         return prefix + '[' + key + ']';
     },
@@ -1468,26 +1487,13 @@ var arrayPrefixGenerators = {
     }
 };
 
-var isArray = Array.isArray;
-var push = Array.prototype.push;
-var pushToArray = function (arr, valueOrArray) {
-    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
-};
-
 var toISO = Date.prototype.toISOString;
 
 var defaults = {
-    addQueryPrefix: false,
-    allowDots: false,
-    charset: 'utf-8',
-    charsetSentinel: false,
     delimiter: '&',
     encode: true,
     encoder: utils.encode,
     encodeValuesOnly: false,
-    formatter: formats.formatters[formats['default']],
-    // deprecated
-    indices: false,
     serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
         return toISO.call(date);
     },
@@ -1507,21 +1513,16 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
     allowDots,
     serializeDate,
     formatter,
-    encodeValuesOnly,
-    charset
+    encodeValuesOnly
 ) {
     var obj = object;
     if (typeof filter === 'function') {
         obj = filter(prefix, obj);
     } else if (obj instanceof Date) {
         obj = serializeDate(obj);
-    } else if (generateArrayPrefix === 'comma' && isArray(obj)) {
-        obj = obj.join(',');
-    }
-
-    if (obj === null) {
+    } else if (obj === null) {
         if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder) : prefix;
         }
 
         obj = '';
@@ -1529,8 +1530,8 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
 
     if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
         if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);
-            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder))];
         }
         return [formatter(prefix) + '=' + formatter(String(obj))];
     }
@@ -1542,7 +1543,7 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
     }
 
     var objKeys;
-    if (isArray(filter)) {
+    if (Array.isArray(filter)) {
         objKeys = filter;
     } else {
         var keys = Object.keys(obj);
@@ -1556,10 +1557,10 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
             continue;
         }
 
-        if (isArray(obj)) {
-            pushToArray(values, stringify(
+        if (Array.isArray(obj)) {
+            values = values.concat(stringify(
                 obj[key],
-                typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix,
+                generateArrayPrefix(prefix, key),
                 generateArrayPrefix,
                 strictNullHandling,
                 skipNulls,
@@ -1569,11 +1570,10 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly,
-                charset
+                encodeValuesOnly
             ));
         } else {
-            pushToArray(values, stringify(
+            values = values.concat(stringify(
                 obj[key],
                 prefix + (allowDots ? '.' + key : '[' + key + ']'),
                 generateArrayPrefix,
@@ -1585,8 +1585,7 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly,
-                charset
+                encodeValuesOnly
             ));
         }
     }
@@ -1594,63 +1593,36 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
     return values;
 };
 
-var normalizeStringifyOptions = function normalizeStringifyOptions(opts) {
-    if (!opts) {
-        return defaults;
-    }
+module.exports = function (object, opts) {
+    var obj = object;
+    var options = opts ? utils.assign({}, opts) : {};
 
-    if (opts.encoder !== null && opts.encoder !== undefined && typeof opts.encoder !== 'function') {
+    if (options.encoder !== null && options.encoder !== undefined && typeof options.encoder !== 'function') {
         throw new TypeError('Encoder has to be a function.');
     }
 
-    var charset = opts.charset || defaults.charset;
-    if (typeof opts.charset !== 'undefined' && opts.charset !== 'utf-8' && opts.charset !== 'iso-8859-1') {
-        throw new TypeError('The charset option must be either utf-8, iso-8859-1, or undefined');
+    var delimiter = typeof options.delimiter === 'undefined' ? defaults.delimiter : options.delimiter;
+    var strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+    var skipNulls = typeof options.skipNulls === 'boolean' ? options.skipNulls : defaults.skipNulls;
+    var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
+    var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
+    var sort = typeof options.sort === 'function' ? options.sort : null;
+    var allowDots = typeof options.allowDots === 'undefined' ? false : options.allowDots;
+    var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
+    var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
+    if (typeof options.format === 'undefined') {
+        options.format = formats['default'];
+    } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
+        throw new TypeError('Unknown format option provided.');
     }
-
-    var format = formats['default'];
-    if (typeof opts.format !== 'undefined') {
-        if (!has.call(formats.formatters, opts.format)) {
-            throw new TypeError('Unknown format option provided.');
-        }
-        format = opts.format;
-    }
-    var formatter = formats.formatters[format];
-
-    var filter = defaults.filter;
-    if (typeof opts.filter === 'function' || isArray(opts.filter)) {
-        filter = opts.filter;
-    }
-
-    return {
-        addQueryPrefix: typeof opts.addQueryPrefix === 'boolean' ? opts.addQueryPrefix : defaults.addQueryPrefix,
-        allowDots: typeof opts.allowDots === 'undefined' ? defaults.allowDots : !!opts.allowDots,
-        charset: charset,
-        charsetSentinel: typeof opts.charsetSentinel === 'boolean' ? opts.charsetSentinel : defaults.charsetSentinel,
-        delimiter: typeof opts.delimiter === 'undefined' ? defaults.delimiter : opts.delimiter,
-        encode: typeof opts.encode === 'boolean' ? opts.encode : defaults.encode,
-        encoder: typeof opts.encoder === 'function' ? opts.encoder : defaults.encoder,
-        encodeValuesOnly: typeof opts.encodeValuesOnly === 'boolean' ? opts.encodeValuesOnly : defaults.encodeValuesOnly,
-        filter: filter,
-        formatter: formatter,
-        serializeDate: typeof opts.serializeDate === 'function' ? opts.serializeDate : defaults.serializeDate,
-        skipNulls: typeof opts.skipNulls === 'boolean' ? opts.skipNulls : defaults.skipNulls,
-        sort: typeof opts.sort === 'function' ? opts.sort : null,
-        strictNullHandling: typeof opts.strictNullHandling === 'boolean' ? opts.strictNullHandling : defaults.strictNullHandling
-    };
-};
-
-module.exports = function (object, opts) {
-    var obj = object;
-    var options = normalizeStringifyOptions(opts);
-
+    var formatter = formats.formatters[options.format];
     var objKeys;
     var filter;
 
     if (typeof options.filter === 'function') {
         filter = options.filter;
         obj = filter('', obj);
-    } else if (isArray(options.filter)) {
+    } else if (Array.isArray(options.filter)) {
         filter = options.filter;
         objKeys = filter;
     }
@@ -1662,10 +1634,10 @@ module.exports = function (object, opts) {
     }
 
     var arrayFormat;
-    if (opts && opts.arrayFormat in arrayPrefixGenerators) {
-        arrayFormat = opts.arrayFormat;
-    } else if (opts && 'indices' in opts) {
-        arrayFormat = opts.indices ? 'indices' : 'repeat';
+    if (options.arrayFormat in arrayPrefixGenerators) {
+        arrayFormat = options.arrayFormat;
+    } else if ('indices' in options) {
+        arrayFormat = options.indices ? 'indices' : 'repeat';
     } else {
         arrayFormat = 'indices';
     }
@@ -1676,45 +1648,35 @@ module.exports = function (object, opts) {
         objKeys = Object.keys(obj);
     }
 
-    if (options.sort) {
-        objKeys.sort(options.sort);
+    if (sort) {
+        objKeys.sort(sort);
     }
 
     for (var i = 0; i < objKeys.length; ++i) {
         var key = objKeys[i];
 
-        if (options.skipNulls && obj[key] === null) {
+        if (skipNulls && obj[key] === null) {
             continue;
         }
-        pushToArray(keys, stringify(
+
+        keys = keys.concat(stringify(
             obj[key],
             key,
             generateArrayPrefix,
-            options.strictNullHandling,
-            options.skipNulls,
-            options.encode ? options.encoder : null,
-            options.filter,
-            options.sort,
-            options.allowDots,
-            options.serializeDate,
-            options.formatter,
-            options.encodeValuesOnly,
-            options.charset
+            strictNullHandling,
+            skipNulls,
+            encode ? encoder : null,
+            filter,
+            sort,
+            allowDots,
+            serializeDate,
+            formatter,
+            encodeValuesOnly
         ));
     }
 
-    var joined = keys.join(options.delimiter);
+    var joined = keys.join(delimiter);
     var prefix = options.addQueryPrefix === true ? '?' : '';
-
-    if (options.charsetSentinel) {
-        if (options.charset === 'iso-8859-1') {
-            // encodeURIComponent('&#10003;'), the "numeric entity" representation of a checkmark
-            prefix += 'utf8=%26%2310003%3B&';
-        } else {
-            // encodeURIComponent('✓')
-            prefix += 'utf8=%E2%9C%93&';
-        }
-    }
 
     return joined.length > 0 ? prefix + joined : '';
 };
@@ -1902,7 +1864,11 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "default", function() { return /* binding */ addStylesClient; });
 
 // CONCATENATED MODULE: ./node_modules/vue-style-loader/lib/listToStyles.js
 /**
@@ -1934,7 +1900,6 @@ function listToStyles (parentId, list) {
 }
 
 // CONCATENATED MODULE: ./node_modules/vue-style-loader/lib/addStylesClient.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return addStylesClient; });
 /*
   MIT License http://www.opensource.org/licenses/mit-license.php
   Author Tobias Koppers @sokra
@@ -2182,13 +2147,23 @@ module.exports = function mergeConfig(config1, config2) {
   config2 = config2 || {};
   var config = {};
 
-  utils.forEach(['url', 'method', 'params', 'data'], function valueFromConfig2(prop) {
+  var valueFromConfig2Keys = ['url', 'method', 'params', 'data'];
+  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
+  var defaultToConfig2Keys = [
+    'baseURL', 'url', 'transformRequest', 'transformResponse', 'paramsSerializer',
+    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
+    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress',
+    'maxContentLength', 'validateStatus', 'maxRedirects', 'httpAgent',
+    'httpsAgent', 'cancelToken', 'socketPath'
+  ];
+
+  utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
     if (typeof config2[prop] !== 'undefined') {
       config[prop] = config2[prop];
     }
   });
 
-  utils.forEach(['headers', 'auth', 'proxy'], function mergeDeepProperties(prop) {
+  utils.forEach(mergeDeepPropertiesKeys, function mergeDeepProperties(prop) {
     if (utils.isObject(config2[prop])) {
       config[prop] = utils.deepMerge(config1[prop], config2[prop]);
     } else if (typeof config2[prop] !== 'undefined') {
@@ -2200,13 +2175,25 @@ module.exports = function mergeConfig(config1, config2) {
     }
   });
 
-  utils.forEach([
-    'baseURL', 'transformRequest', 'transformResponse', 'paramsSerializer',
-    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
-    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress', 'maxContentLength',
-    'validateStatus', 'maxRedirects', 'httpAgent', 'httpsAgent', 'cancelToken',
-    'socketPath'
-  ], function defaultToConfig2(prop) {
+  utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
+    if (typeof config2[prop] !== 'undefined') {
+      config[prop] = config2[prop];
+    } else if (typeof config1[prop] !== 'undefined') {
+      config[prop] = config1[prop];
+    }
+  });
+
+  var axiosKeys = valueFromConfig2Keys
+    .concat(mergeDeepPropertiesKeys)
+    .concat(defaultToConfig2Keys);
+
+  var otherKeys = Object
+    .keys(config2)
+    .filter(function filterAxiosKeys(key) {
+      return axiosKeys.indexOf(key) === -1;
+    });
+
+  utils.forEach(otherKeys, function otherKeysDefaultToConfig2(prop) {
     if (typeof config2[prop] !== 'undefined') {
       config[prop] = config2[prop];
     } else if (typeof config1[prop] !== 'undefined') {
@@ -2297,8 +2284,6 @@ var utils = __webpack_require__("c532");
 var transformData = __webpack_require__("c401");
 var isCancel = __webpack_require__("2e67");
 var defaults = __webpack_require__("2444");
-var isAbsoluteURL = __webpack_require__("d925");
-var combineURLs = __webpack_require__("e683");
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -2318,11 +2303,6 @@ function throwIfCancellationRequested(config) {
 module.exports = function dispatchRequest(config) {
   throwIfCancellationRequested(config);
 
-  // Support baseURL config
-  if (config.baseURL && !isAbsoluteURL(config.url)) {
-    config.url = combineURLs(config.baseURL, config.url);
-  }
-
   // Ensure headers exist
   config.headers = config.headers || {};
 
@@ -2337,7 +2317,7 @@ module.exports = function dispatchRequest(config) {
   config.headers = utils.merge(
     config.headers.common || {},
     config.headers[config.method] || {},
-    config.headers || {}
+    config.headers
   );
 
   utils.forEach(
@@ -2390,9 +2370,9 @@ var store = __webpack_require__("c6cd");
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.6.0',
+  version: '3.6.4',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2019 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
 });
 
 
@@ -2694,23 +2674,6 @@ module.exports = (
 
 /***/ }),
 
-/***/ "7abb":
-/***/ (function(module, exports, __webpack_require__) {
-
-// Imports
-var ___CSS_LOADER_API_IMPORT___ = __webpack_require__("24fb");
-var ___CSS_LOADER_GET_URL_IMPORT___ = __webpack_require__("1de5");
-var ___CSS_LOADER_URL_IMPORT_0___ = __webpack_require__("684f");
-exports = ___CSS_LOADER_API_IMPORT___(false);
-var ___CSS_LOADER_URL_REPLACEMENT_0___ = ___CSS_LOADER_GET_URL_IMPORT___(___CSS_LOADER_URL_IMPORT_0___);
-// Module
-exports.push([module.i, "#clicaptcha-container[data-v-f97200ea]{width:350px;height:290px;padding:15px;border:1px solid #b1b3b8;background-color:#f5f6f7;position:fixed;z-index:10000;left:50%;top:50%;margin-left:-191px;margin-top:-161px;border-radius:10px;-webkit-box-shadow:0 0 0 1px hsla(0,0%,100%,.3) inset,0 .5em 1em rgba(0,0,0,.6);box-shadow:inset 0 0 0 1px hsla(0,0%,100%,.3),0 .5em 1em rgba(0,0,0,.6)}#clicaptcha-container .clicaptcha-imgbox[data-v-f97200ea]{position:relative}#clicaptcha-container .clicaptcha-imgbox .clicaptcha-img[data-v-f97200ea]{width:350px;height:200px;border:none}#clicaptcha-container .clicaptcha-imgbox .step[data-v-f97200ea]{position:absolute;width:20px;height:20px;line-height:20px;font-size:14px;font-weight:700;text-align:center;color:#f04848;border:3px solid #f04848;background-color:#fff;border-radius:30px;-webkit-box-shadow:0 0 10px #fff;box-shadow:0 0 10px #fff;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}#clicaptcha-container .clicaptcha-title[data-v-f97200ea]{font-family:Microsoft YaHei;height:40px;line-height:40px;font-size:14px;text-align:center;color:#333}#clicaptcha-container .clicaptcha-title span[data-v-f97200ea]{margin-left:10px;font-size:18px;font-weight:700;color:#c00}#clicaptcha-container .clicaptcha-title span.clicaptcha-clicked[data-v-f97200ea]{color:#069}#clicaptcha-container .clicaptcha-refresh-box[data-v-f97200ea]{position:relative;margin-top:10px}#clicaptcha-container .clicaptcha-refresh-line[data-v-f97200ea]{position:absolute;top:16px;width:140px;height:1px;background-color:#ccc}#clicaptcha-container .clicaptcha-refresh-line-l[data-v-f97200ea]{left:5px}#clicaptcha-container .clicaptcha-refresh-line-r[data-v-f97200ea]{right:5px}#clicaptcha-container .clicaptcha-refresh-btn[data-v-f97200ea]{display:block;margin:0 auto;width:32px;height:32px;background:url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ") no-repeat}#clicaptcha-container .clicaptcha-refresh-btn[data-v-f97200ea]:hover{background-position:-32px 0}#clicaptcha-mask[data-v-f97200ea]{position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;opacity:.5;background-color:#000}", ""]);
-// Exports
-module.exports = exports;
-
-
-/***/ }),
-
 /***/ "7f9a":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2745,8 +2708,36 @@ var fails = __webpack_require__("d039");
 
 // Thank's IE8 for his funny defineProperty
 module.exports = !fails(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+  return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
+
+
+/***/ }),
+
+/***/ "83b9":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var isAbsoluteURL = __webpack_require__("d925");
+var combineURLs = __webpack_require__("e683");
+
+/**
+ * Creates a new URL by combining the baseURL with the requestedURL,
+ * only when the requestedURL is not already an absolute URL.
+ * If the requestURL is absolute, this function returns the requestedURL untouched.
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} requestedURL Absolute or relative URL to combine
+ * @returns {string} The combined full path
+ */
+module.exports = function buildFullPath(baseURL, requestedURL) {
+  if (baseURL && !isAbsoluteURL(requestedURL)) {
+    return combineURLs(baseURL, requestedURL);
+  }
+  return requestedURL;
+};
 
 
 /***/ }),
@@ -3062,63 +3053,21 @@ var defaults = {
     allowDots: false,
     allowPrototypes: false,
     arrayLimit: 20,
-    charset: 'utf-8',
-    charsetSentinel: false,
-    comma: false,
     decoder: utils.decode,
     delimiter: '&',
     depth: 5,
-    ignoreQueryPrefix: false,
-    interpretNumericEntities: false,
     parameterLimit: 1000,
-    parseArrays: true,
     plainObjects: false,
     strictNullHandling: false
 };
-
-var interpretNumericEntities = function (str) {
-    return str.replace(/&#(\d+);/g, function ($0, numberStr) {
-        return String.fromCharCode(parseInt(numberStr, 10));
-    });
-};
-
-// This is what browsers will submit when the ✓ character occurs in an
-// application/x-www-form-urlencoded body and the encoding of the page containing
-// the form is iso-8859-1, or when the submitted form has an accept-charset
-// attribute of iso-8859-1. Presumably also with other charsets that do not contain
-// the ✓ character, such as us-ascii.
-var isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')
-
-// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.
-var charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')
 
 var parseValues = function parseQueryStringValues(str, options) {
     var obj = {};
     var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
     var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
     var parts = cleanStr.split(options.delimiter, limit);
-    var skipIndex = -1; // Keep track of where the utf8 sentinel was found
-    var i;
 
-    var charset = options.charset;
-    if (options.charsetSentinel) {
-        for (i = 0; i < parts.length; ++i) {
-            if (parts[i].indexOf('utf8=') === 0) {
-                if (parts[i] === charsetSentinel) {
-                    charset = 'utf-8';
-                } else if (parts[i] === isoSentinel) {
-                    charset = 'iso-8859-1';
-                }
-                skipIndex = i;
-                i = parts.length; // The eslint settings do not allow break;
-            }
-        }
-    }
-
-    for (i = 0; i < parts.length; ++i) {
-        if (i === skipIndex) {
-            continue;
-        }
+    for (var i = 0; i < parts.length; ++i) {
         var part = parts[i];
 
         var bracketEqualsPos = part.indexOf(']=');
@@ -3126,23 +3075,14 @@ var parseValues = function parseQueryStringValues(str, options) {
 
         var key, val;
         if (pos === -1) {
-            key = options.decoder(part, defaults.decoder, charset);
+            key = options.decoder(part, defaults.decoder);
             val = options.strictNullHandling ? null : '';
         } else {
-            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);
-            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);
+            key = options.decoder(part.slice(0, pos), defaults.decoder);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder);
         }
-
-        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
-            val = interpretNumericEntities(val);
-        }
-
-        if (val && options.comma && val.indexOf(',') > -1) {
-            val = val.split(',');
-        }
-
         if (has.call(obj, key)) {
-            obj[key] = utils.combine(obj[key], val);
+            obj[key] = [].concat(obj[key]).concat(val);
         } else {
             obj[key] = val;
         }
@@ -3158,15 +3098,14 @@ var parseObject = function (chain, val, options) {
         var obj;
         var root = chain[i];
 
-        if (root === '[]' && options.parseArrays) {
-            obj = [].concat(leaf);
+        if (root === '[]') {
+            obj = [];
+            obj = obj.concat(leaf);
         } else {
             obj = options.plainObjects ? Object.create(null) : {};
             var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
             var index = parseInt(cleanRoot, 10);
-            if (!options.parseArrays && cleanRoot === '') {
-                obj = { 0: leaf };
-            } else if (
+            if (
                 !isNaN(index)
                 && root !== cleanRoot
                 && String(index) === cleanRoot
@@ -3208,7 +3147,8 @@ var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
 
     var keys = [];
     if (parent) {
-        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties
+        // If we aren't using plain objects, optionally prefix keys
+        // that would overwrite object prototype properties
         if (!options.plainObjects && has.call(Object.prototype, parent)) {
             if (!options.allowPrototypes) {
                 return;
@@ -3240,41 +3180,24 @@ var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
     return parseObject(keys, val, options);
 };
 
-var normalizeParseOptions = function normalizeParseOptions(opts) {
-    if (!opts) {
-        return defaults;
-    }
+module.exports = function (str, opts) {
+    var options = opts ? utils.assign({}, opts) : {};
 
-    if (opts.decoder !== null && opts.decoder !== undefined && typeof opts.decoder !== 'function') {
+    if (options.decoder !== null && options.decoder !== undefined && typeof options.decoder !== 'function') {
         throw new TypeError('Decoder has to be a function.');
     }
 
-    if (typeof opts.charset !== 'undefined' && opts.charset !== 'utf-8' && opts.charset !== 'iso-8859-1') {
-        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
-    }
-    var charset = typeof opts.charset === 'undefined' ? defaults.charset : opts.charset;
-
-    return {
-        allowDots: typeof opts.allowDots === 'undefined' ? defaults.allowDots : !!opts.allowDots,
-        allowPrototypes: typeof opts.allowPrototypes === 'boolean' ? opts.allowPrototypes : defaults.allowPrototypes,
-        arrayLimit: typeof opts.arrayLimit === 'number' ? opts.arrayLimit : defaults.arrayLimit,
-        charset: charset,
-        charsetSentinel: typeof opts.charsetSentinel === 'boolean' ? opts.charsetSentinel : defaults.charsetSentinel,
-        comma: typeof opts.comma === 'boolean' ? opts.comma : defaults.comma,
-        decoder: typeof opts.decoder === 'function' ? opts.decoder : defaults.decoder,
-        delimiter: typeof opts.delimiter === 'string' || utils.isRegExp(opts.delimiter) ? opts.delimiter : defaults.delimiter,
-        depth: typeof opts.depth === 'number' ? opts.depth : defaults.depth,
-        ignoreQueryPrefix: opts.ignoreQueryPrefix === true,
-        interpretNumericEntities: typeof opts.interpretNumericEntities === 'boolean' ? opts.interpretNumericEntities : defaults.interpretNumericEntities,
-        parameterLimit: typeof opts.parameterLimit === 'number' ? opts.parameterLimit : defaults.parameterLimit,
-        parseArrays: opts.parseArrays !== false,
-        plainObjects: typeof opts.plainObjects === 'boolean' ? opts.plainObjects : defaults.plainObjects,
-        strictNullHandling: typeof opts.strictNullHandling === 'boolean' ? opts.strictNullHandling : defaults.strictNullHandling
-    };
-};
-
-module.exports = function (str, opts) {
-    var options = normalizeParseOptions(opts);
+    options.ignoreQueryPrefix = options.ignoreQueryPrefix === true;
+    options.delimiter = typeof options.delimiter === 'string' || utils.isRegExp(options.delimiter) ? options.delimiter : defaults.delimiter;
+    options.depth = typeof options.depth === 'number' ? options.depth : defaults.depth;
+    options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
+    options.parseArrays = options.parseArrays !== false;
+    options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
+    options.allowDots = typeof options.allowDots === 'boolean' ? options.allowDots : defaults.allowDots;
+    options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
+    options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
+    options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
+    options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
 
     if (str === '' || str === null || typeof str === 'undefined') {
         return options.plainObjects ? Object.create(null) : {};
@@ -3337,20 +3260,38 @@ exports.BROKEN_CARET = fails(function () {
 var $ = __webpack_require__("23e7");
 var IndexedObject = __webpack_require__("44ad");
 var toIndexedObject = __webpack_require__("fc6a");
-var sloppyArrayMethod = __webpack_require__("b301");
+var arrayMethodIsStrict = __webpack_require__("a640");
 
 var nativeJoin = [].join;
 
 var ES3_STRINGS = IndexedObject != Object;
-var SLOPPY_METHOD = sloppyArrayMethod('join', ',');
+var STRICT_METHOD = arrayMethodIsStrict('join', ',');
 
 // `Array.prototype.join` method
 // https://tc39.github.io/ecma262/#sec-array.prototype.join
-$({ target: 'Array', proto: true, forced: ES3_STRINGS || SLOPPY_METHOD }, {
+$({ target: 'Array', proto: true, forced: ES3_STRINGS || !STRICT_METHOD }, {
   join: function join(separator) {
     return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
   }
 });
+
+
+/***/ }),
+
+/***/ "a640":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fails = __webpack_require__("d039");
+
+module.exports = function (METHOD_NAME, argument) {
+  var method = [][METHOD_NAME];
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call,no-throw-literal
+    method.call(null, argument || function () { throw 1; }, 1);
+  });
+};
 
 
 /***/ }),
@@ -3409,24 +3350,6 @@ module.exports = function () {
 
 /***/ }),
 
-/***/ "b301":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var fails = __webpack_require__("d039");
-
-module.exports = function (METHOD_NAME, argument) {
-  var method = [][METHOD_NAME];
-  return !method || !fails(function () {
-    // eslint-disable-next-line no-useless-call,no-throw-literal
-    method.call(null, argument || function () { throw 1; }, 1);
-  });
-};
-
-
-/***/ }),
-
 /***/ "b313":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3462,6 +3385,7 @@ module.exports = {
 var utils = __webpack_require__("c532");
 var settle = __webpack_require__("467f");
 var buildURL = __webpack_require__("30b5");
+var buildFullPath = __webpack_require__("83b9");
 var parseHeaders = __webpack_require__("c345");
 var isURLSameOrigin = __webpack_require__("3934");
 var createError = __webpack_require__("2d83");
@@ -3484,7 +3408,8 @@ module.exports = function xhrAdapter(config) {
       requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
     }
 
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+    var fullPath = buildFullPath(config.baseURL, config.url);
+    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
 
     // Set the request timeout in MS
     request.timeout = config.timeout;
@@ -3545,7 +3470,11 @@ module.exports = function xhrAdapter(config) {
 
     // Handle timeout
     request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+      var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
+      if (config.timeoutErrorMessage) {
+        timeoutErrorMessage = config.timeoutErrorMessage;
+      }
+      reject(createError(timeoutErrorMessage, config, 'ECONNABORTED',
         request));
 
       // Clean up request
@@ -3559,7 +3488,7 @@ module.exports = function xhrAdapter(config) {
       var cookies = __webpack_require__("7aac");
 
       // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
         cookies.read(config.xsrfCookieName) :
         undefined;
 
@@ -3582,8 +3511,8 @@ module.exports = function xhrAdapter(config) {
     }
 
     // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
+    if (!utils.isUndefined(config.withCredentials)) {
+      request.withCredentials = !!config.withCredentials;
     }
 
     // Add responseType to request if needed
@@ -3647,7 +3576,7 @@ var USE_SYMBOL_AS_UID = __webpack_require__("fdbf");
 
 var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : uid;
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
   if (!has(WellKnownSymbolsStore, name)) {
@@ -3791,7 +3720,6 @@ module.exports = false;
 
 
 var bind = __webpack_require__("1d2b");
-var isBuffer = __webpack_require__("044b");
 
 /*global toString:true*/
 
@@ -3807,6 +3735,27 @@ var toString = Object.prototype.toString;
  */
 function isArray(val) {
   return toString.call(val) === '[object Array]';
+}
+
+/**
+ * Determine if a value is undefined
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if the value is undefined, otherwise false
+ */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+ * Determine if a value is a Buffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Buffer, otherwise false
+ */
+function isBuffer(val) {
+  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
+    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
 }
 
 /**
@@ -3863,16 +3812,6 @@ function isString(val) {
  */
 function isNumber(val) {
   return typeof val === 'number';
-}
-
-/**
- * Determine if a value is undefined
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if the value is undefined, otherwise false
- */
-function isUndefined(val) {
-  return typeof val === 'undefined';
 }
 
 /**
@@ -4386,7 +4325,6 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 
 var has = Object.prototype.hasOwnProperty;
-var isArray = Array.isArray;
 
 var hexTable = (function () {
     var array = [];
@@ -4398,11 +4336,13 @@ var hexTable = (function () {
 }());
 
 var compactQueue = function compactQueue(queue) {
-    while (queue.length > 1) {
-        var item = queue.pop();
-        var obj = item.obj[item.prop];
+    var obj;
 
-        if (isArray(obj)) {
+    while (queue.length) {
+        var item = queue.pop();
+        obj = item.obj[item.prop];
+
+        if (Array.isArray(obj)) {
             var compacted = [];
 
             for (var j = 0; j < obj.length; ++j) {
@@ -4414,6 +4354,8 @@ var compactQueue = function compactQueue(queue) {
             item.obj[item.prop] = compacted;
         }
     }
+
+    return obj;
 };
 
 var arrayToObject = function arrayToObject(source, options) {
@@ -4433,10 +4375,10 @@ var merge = function merge(target, source, options) {
     }
 
     if (typeof source !== 'object') {
-        if (isArray(target)) {
+        if (Array.isArray(target)) {
             target.push(source);
-        } else if (target && typeof target === 'object') {
-            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {
+        } else if (typeof target === 'object') {
+            if (options.plainObjects || options.allowPrototypes || !has.call(Object.prototype, source)) {
                 target[source] = true;
             }
         } else {
@@ -4446,21 +4388,20 @@ var merge = function merge(target, source, options) {
         return target;
     }
 
-    if (!target || typeof target !== 'object') {
+    if (typeof target !== 'object') {
         return [target].concat(source);
     }
 
     var mergeTarget = target;
-    if (isArray(target) && !isArray(source)) {
+    if (Array.isArray(target) && !Array.isArray(source)) {
         mergeTarget = arrayToObject(target, options);
     }
 
-    if (isArray(target) && isArray(source)) {
+    if (Array.isArray(target) && Array.isArray(source)) {
         source.forEach(function (item, i) {
             if (has.call(target, i)) {
-                var targetItem = target[i];
-                if (targetItem && typeof targetItem === 'object' && item && typeof item === 'object') {
-                    target[i] = merge(targetItem, item, options);
+                if (target[i] && typeof target[i] === 'object') {
+                    target[i] = merge(target[i], item, options);
                 } else {
                     target.push(item);
                 }
@@ -4490,21 +4431,15 @@ var assign = function assignSingleSource(target, source) {
     }, target);
 };
 
-var decode = function (str, decoder, charset) {
-    var strWithoutPlus = str.replace(/\+/g, ' ');
-    if (charset === 'iso-8859-1') {
-        // unescape never throws, no try...catch needed:
-        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
-    }
-    // utf-8
+var decode = function (str) {
     try {
-        return decodeURIComponent(strWithoutPlus);
+        return decodeURIComponent(str.replace(/\+/g, ' '));
     } catch (e) {
-        return strWithoutPlus;
+        return str;
     }
 };
 
-var encode = function encode(str, defaultEncoder, charset) {
+var encode = function encode(str) {
     // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
     // It has been adapted here for stricter adherence to RFC 3986
     if (str.length === 0) {
@@ -4512,12 +4447,6 @@ var encode = function encode(str, defaultEncoder, charset) {
     }
 
     var string = typeof str === 'string' ? str : String(str);
-
-    if (charset === 'iso-8859-1') {
-        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {
-            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';
-        });
-    }
 
     var out = '';
     for (var i = 0; i < string.length; ++i) {
@@ -4581,9 +4510,7 @@ var compact = function compact(value) {
         }
     }
 
-    compactQueue(queue);
-
-    return value;
+    return compactQueue(queue);
 };
 
 var isRegExp = function isRegExp(obj) {
@@ -4591,21 +4518,16 @@ var isRegExp = function isRegExp(obj) {
 };
 
 var isBuffer = function isBuffer(obj) {
-    if (!obj || typeof obj !== 'object') {
+    if (obj === null || typeof obj === 'undefined') {
         return false;
     }
 
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
-var combine = function combine(a, b) {
-    return [].concat(a, b);
-};
-
 module.exports = {
     arrayToObject: arrayToObject,
     assign: assign,
-    combine: combine,
     compact: compact,
     decode: decode,
     encode: encode,
@@ -4617,11 +4539,24 @@ module.exports = {
 
 /***/ }),
 
+/***/ "d751":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_100a44f0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("198b");
+/* harmony import */ var _node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_100a44f0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_100a44f0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_100a44f0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
 /***/ "d784":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+// TODO: Remove from `core-js@4` since it's moved to entry points
+__webpack_require__("ac1f");
 var redefine = __webpack_require__("6eeb");
 var fails = __webpack_require__("d039");
 var wellKnownSymbol = __webpack_require__("b622");
@@ -4647,6 +4582,15 @@ var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
 // https://stackoverflow.com/questions/6024666/getting-ie-to-replace-a-regex-with-the-literal-string-0
 var REPLACE_KEEPS_$0 = (function () {
   return 'a'.replace(/./, '$0') === '$0';
+})();
+
+var REPLACE = wellKnownSymbol('replace');
+// Safari <= 13.0.3(?) substitutes nth capture where n>m with an empty string
+var REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE = (function () {
+  if (/./[REPLACE]) {
+    return /./[REPLACE]('a', '$0') === '';
+  }
+  return false;
 })();
 
 // Chrome 51 has a buggy "split" implementation when RegExp#exec !== nativeExec
@@ -4696,7 +4640,11 @@ module.exports = function (KEY, length, exec, sham) {
   if (
     !DELEGATES_TO_SYMBOL ||
     !DELEGATES_TO_EXEC ||
-    (KEY === 'replace' && !(REPLACE_SUPPORTS_NAMED_GROUPS && REPLACE_KEEPS_$0)) ||
+    (KEY === 'replace' && !(
+      REPLACE_SUPPORTS_NAMED_GROUPS &&
+      REPLACE_KEEPS_$0 &&
+      !REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE
+    )) ||
     (KEY === 'split' && !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC)
   ) {
     var nativeRegExpMethod = /./[SYMBOL];
@@ -4711,7 +4659,10 @@ module.exports = function (KEY, length, exec, sham) {
         return { done: true, value: nativeMethod.call(str, regexp, arg2) };
       }
       return { done: false };
-    }, { REPLACE_KEEPS_$0: REPLACE_KEEPS_$0 });
+    }, {
+      REPLACE_KEEPS_$0: REPLACE_KEEPS_$0,
+      REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE: REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE
+    });
     var stringMethod = methods[0];
     var regexMethod = methods[1];
 
@@ -4775,18 +4726,20 @@ module.exports =
 
 /***/ }),
 
-/***/ "dbb8":
+/***/ "dd9b":
 /***/ (function(module, exports, __webpack_require__) {
 
-// style-loader: Adds some css to the DOM by adding a <style> tag
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__("24fb");
+var ___CSS_LOADER_GET_URL_IMPORT___ = __webpack_require__("1de5");
+var ___CSS_LOADER_URL_IMPORT_0___ = __webpack_require__("684f");
+exports = ___CSS_LOADER_API_IMPORT___(false);
+var ___CSS_LOADER_URL_REPLACEMENT_0___ = ___CSS_LOADER_GET_URL_IMPORT___(___CSS_LOADER_URL_IMPORT_0___);
+// Module
+exports.push([module.i, "#clicaptcha-container[data-v-100a44f0]{width:350px;height:290px;padding:15px;border:1px solid #b1b3b8;background-color:#f5f6f7;position:fixed;z-index:10000;left:50%;top:50%;margin-left:-175px;margin-top:-145px;border-radius:10px;-webkit-box-shadow:0 0 0 1px hsla(0,0%,100%,.3) inset,0 .5em 1em rgba(0,0,0,.6);box-shadow:inset 0 0 0 1px hsla(0,0%,100%,.3),0 .5em 1em rgba(0,0,0,.6)}#clicaptcha-container .clicaptcha-imgbox[data-v-100a44f0]{position:relative}#clicaptcha-container .clicaptcha-imgbox .clicaptcha-img[data-v-100a44f0]{width:100%;height:auto;border:none}#clicaptcha-container .clicaptcha-imgbox .step[data-v-100a44f0]{position:absolute;width:20px;height:20px;line-height:20px;font-size:14px;font-weight:700;text-align:center;color:#f04848;border:3px solid #f04848;background-color:#fff;border-radius:30px;-webkit-box-shadow:0 0 10px #fff;box-shadow:0 0 10px #fff;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}#clicaptcha-container .clicaptcha-title[data-v-100a44f0]{font-family:Microsoft YaHei;height:40px;line-height:40px;font-size:14px;text-align:center;color:#333}#clicaptcha-container .clicaptcha-title span[data-v-100a44f0]{margin-left:10px;font-size:18px;font-weight:700;color:#c00}#clicaptcha-container .clicaptcha-title span.clicaptcha-clicked[data-v-100a44f0]{color:#069}#clicaptcha-container .clicaptcha-refresh-box[data-v-100a44f0]{position:relative;margin-top:10px}#clicaptcha-container .clicaptcha-refresh-line[data-v-100a44f0]{position:absolute;top:16px;width:140px;height:1px;background-color:#ccc}#clicaptcha-container .clicaptcha-refresh-line-l[data-v-100a44f0]{left:5px}#clicaptcha-container .clicaptcha-refresh-line-r[data-v-100a44f0]{right:5px}#clicaptcha-container .clicaptcha-refresh-btn[data-v-100a44f0]{display:block;margin:0 auto;width:32px;height:32px;background:url(" + ___CSS_LOADER_URL_REPLACEMENT_0___ + ") no-repeat}#clicaptcha-container .clicaptcha-refresh-btn[data-v-100a44f0]:hover{background-position:-32px 0}#clicaptcha-mask[data-v-100a44f0]{position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;opacity:.5;background-color:#000}", ""]);
+// Exports
+module.exports = exports;
 
-// load the styles
-var content = __webpack_require__("7abb");
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var add = __webpack_require__("499e").default
-var update = add("556d1701", content, true, {"sourceMap":false,"shadowMode":false});
 
 /***/ }),
 
@@ -5143,17 +5096,6 @@ module.exports = function (target, source) {
 
 /***/ }),
 
-/***/ "ea7e":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_f97200ea_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dbb8");
-/* harmony import */ var _node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_f97200ea_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_f97200ea_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_vue_style_loader_index_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_3_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_4_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Clicaptcha_vue_vue_type_style_index_0_id_f97200ea_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
 /***/ "f6b4":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5276,6 +5218,7 @@ module.exports = function (key) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
@@ -5310,7 +5253,7 @@ external_commonjs_vue_commonjs2_vue_root_Vue_default.a.use(vue_cookies_default.a
 var ClicaptchaConstructor = external_commonjs_vue_commonjs2_vue_root_Vue_default.a.extend(__webpack_require__("2799").default);
 var instance;
 
-var Clicaptcha = function Clicaptcha(options) {
+var VueClickCaptcha = function VueClickCaptcha(options) {
   options = options || {};
   instance = new ClicaptchaConstructor({
     data: options
@@ -5321,7 +5264,7 @@ var Clicaptcha = function Clicaptcha(options) {
   return instance.vm;
 };
 
-/* harmony default export */ var components = (Clicaptcha);
+/* harmony default export */ var components = (VueClickCaptcha);
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 
 
@@ -5354,10 +5297,10 @@ module.exports = NATIVE_SYMBOL
   // eslint-disable-next-line no-undef
   && !Symbol.sham
   // eslint-disable-next-line no-undef
-  && typeof Symbol() == 'symbol';
+  && typeof Symbol.iterator == 'symbol';
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=clicaptcha.common.js.map
+//# sourceMappingURL=vue-click-captcha.common.js.map

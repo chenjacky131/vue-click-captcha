@@ -72,11 +72,11 @@ export default {
                     )
                     .then(cb => {
                         let that = this;
-                        if (cb.data == 1) {
+                        if (cb.data.Token) {
                             that.tip = that.success;
                             setTimeout(() => {
                                 that.close();
-                                that.callback();
+                                that.callback(cb.data.Token);
                             }, 1500);
                         } else {
                             that.tip = that.error;
@@ -109,16 +109,16 @@ export default {
     z-index: 10000;
     left: 50%;
     top: 50%;
-    margin-left: -191px;
-    margin-top: -161px;
+    margin-left: -175px;
+    margin-top: -145px;
     border-radius: 10px;
     box-shadow: 0 0 0 1px hsla(0, 0%, 100%, 0.3) inset,
         0 0.5em 1em rgba(0, 0, 0, 0.6);
 	.clicaptcha-imgbox {
 		position: relative;
 		.clicaptcha-img {
-			width: 350px;
-			height: 200px;
+      width: 100%;
+      height: auto;
 			border: none;
 		}
 		.step {
